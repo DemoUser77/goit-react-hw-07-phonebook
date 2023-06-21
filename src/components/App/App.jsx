@@ -1,18 +1,24 @@
-
+import { useDispatch, useSelector} from 'react-redux';
+import { useEffect } from 'react';
 import { ContactForm } from 'components/ContactForm/ContactForm';
 import { ContactList } from 'components/ContactList/ContactList';
 import { Filter } from 'components/Filter/Filter';
+import { selectError, selectIsLoading } from 'redux/selectors';
+import { fetchContacts } from 'redux/operations';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { Container } from './App.styled';
 
-// [
-//   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
-//   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
-//   { id: 'id-3', name: 'Eden Clements', number: '645-17-79' },
-//   { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
-// ];
 
 
 export const App = () => {  
+  const dispatch = useDispatch();
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
+
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
  
   return (
     <Container>
@@ -21,7 +27,20 @@ export const App = () => {
       
       <h2>Contacts</h2>
       <Filter />
-      <ContactList/>  
+      {isLoading && !error && <h2>Request in progress</h2>}
+      <ContactList /> 
+        <ToastContainer
+          position="top-center"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+/>
     </Container>
   );
 };
